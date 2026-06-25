@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="A beautiful and functional Todo List app" />
+  <title>Todo List</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- External Stylesheet -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <!-- ===================== MAIN WRAPPER ===================== -->
+  <div class="container">
+
+    <!-- Page Header -->
+    <div class="header">
+      <h1>✦ My Todo List</h1>
+      <p>Stay focused. Get things done.</p>
+    </div>
+
+    <!-- ---- Stats Cards (Total / Active / Done) ---- -->
+    <div class="stats">
+      <div class="stat-card">
+        <div class="num" id="statTotal">0</div>
+        <div class="label">Total</div>
+      </div>
+      <div class="stat-card">
+        <div class="num" id="statActive">0</div>
+        <div class="label">Active</div>
+      </div>
+      <div class="stat-card">
+        <div class="num" id="statDone">0</div>
+        <div class="label">Done</div>
+      </div>
+    </div>
+
+    <!-- ---- Progress Bar ---- -->
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span>Progress</span>
+        <span id="progressPct">0%</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progressBar" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <!-- ---- Add Task Form ---- -->
+    <div class="input-section">
+      <!-- Text input + Add button -->
+      <div class="input-row">
+        <input
+          type="text"
+          id="taskInput"
+          placeholder="Add a new task..."
+          autocomplete="off"
+        />
+        <button class="btn btn-primary" id="addBtn" onclick="addTask()">+ Add</button>
+      </div>
+
+      <!-- Priority selector + Due date picker -->
+      <div class="options-row">
+        <select id="prioritySelect">
+          <option value="medium">🟡 Medium</option>
+          <option value="high">🔴 High</option>
+          <option value="low">🟢 Low</option>
+        </select>
+        <input type="date" id="dueDateInput" />
+      </div>
+    </div>
+
+    <!-- ---- Filter Buttons ---- -->
+    <div class="filter-bar">
+      <button class="filter-btn active" onclick="setFilter('all', this)">All</button>
+      <button class="filter-btn" onclick="setFilter('active', this)">Active</button>
+      <button class="filter-btn" onclick="setFilter('completed', this)">Completed</button>
+      <button class="filter-btn" onclick="setFilter('high', this)">🔴 High</button>
+      <!-- Clear completed tasks -->
+      <button class="clear-btn filter-right" onclick="clearCompleted()">Clear Done</button>
+    </div>
+
+    <!-- ---- Task List (rendered by script.js) ---- -->
+    <div id="taskList"></div>
+
+  </div>
+  <!-- ===================== END WRAPPER ===================== -->
+
+  <!-- External JavaScript -->
+  <script src="script.js"></script>
+
+</body>
+
+</html>

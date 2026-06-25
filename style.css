@@ -1,0 +1,567 @@
+/* ============================================================
+   style.css  —  Todo List Styles
+   Organized into sections:
+     1. CSS Variables (Design Tokens)
+     2. Reset & Base
+     3. Layout (Container & Header)
+     4. Stats Cards
+     5. Progress Bar
+     6. Add-Task Form (Input Section)
+     7. Filter Bar
+     8. Task List & Task Item
+     9. Priority Badges
+    10. Due Date Label
+    11. Action Buttons
+    12. Empty State
+    13. Scrollbar
+    14. Animations
+   ============================================================ */
+
+
+/* ============================================================
+   1. CSS VARIABLES — central place to change colors/sizes
+   ============================================================ */
+:root {
+  --bg:           #0d0d14;          /* page background */
+  --surface:      #16161f;          /* card background */
+  --surface2:     #1e1e2e;          /* input background */
+  --border:       #2a2a3d;          /* default border color */
+  --accent:       #7c6af7;          /* primary purple */
+  --accent2:      #a78bfa;          /* lighter purple */
+  --accent-glow:  rgba(124, 106, 247, 0.35); /* glow around focused input */
+  --text:         #e8e8f0;          /* main text */
+  --text-muted:   #7878a0;          /* secondary/placeholder text */
+  --green:        #4ade80;          /* low priority / done */
+  --red:          #f87171;          /* high priority / overdue */
+  --yellow:       #facc15;          /* medium priority */
+}
+
+
+/* ============================================================
+   2. RESET & BASE
+   ============================================================ */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px 16px 80px;
+
+  /* Soft background glows for depth */
+  background-image:
+    radial-gradient(ellipse at 20% 20%, rgba(124, 106, 247, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(167, 139, 250, 0.08) 0%, transparent 50%);
+}
+
+
+/* ============================================================
+   3. LAYOUT — Container & Page Header
+   ============================================================ */
+.container {
+  width: 100%;
+  max-width: 600px;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+/* Gradient title text */
+.header h1 {
+  font-size: 2.4rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, #a78bfa, #7c6af7, #c4b5fd);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.header p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-top: 6px;
+}
+
+
+/* ============================================================
+   4. STATS CARDS — Total / Active / Done
+   ============================================================ */
+.stats {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  text-align: center;
+  transition: border-color 0.2s;
+}
+
+.stat-card:hover {
+  border-color: var(--accent);
+}
+
+.stat-card .num {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--accent2);
+  line-height: 1;
+}
+
+.stat-card .label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+
+/* ============================================================
+   5. PROGRESS BAR
+   ============================================================ */
+.progress-wrap {
+  margin-bottom: 16px;
+}
+
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+/* Track */
+.progress-bar-bg {
+  height: 6px;
+  background: var(--surface2);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+/* Fill — width is set dynamically by script.js */
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #7c6af7, #a78bfa);
+  border-radius: 99px;
+  transition: width 0.4s ease;
+  box-shadow: 0 0 8px rgba(124, 106, 247, 0.5);
+}
+
+
+/* ============================================================
+   6. ADD-TASK FORM (Input Section)
+   ============================================================ */
+.input-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Row 1: text field + Add button */
+.input-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+#taskInput {
+  flex: 1;
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 16px;
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+#taskInput::placeholder {
+  color: var(--text-muted);
+}
+
+#taskInput:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+/* Row 2: priority + due date */
+.options-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* Shared style for <select> and date <input> */
+select,
+#dueDateInput {
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 8px 12px;
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.82rem;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+select:focus,
+#dueDateInput:focus {
+  border-color: var(--accent);
+}
+
+/* Style the calendar icon to match dark theme */
+#dueDateInput::-webkit-calendar-picker-indicator {
+  filter: invert(0.7);
+  cursor: pointer;
+}
+
+
+/* ============================================================
+   BUTTONS (shared + variants)
+   ============================================================ */
+.btn {
+  border: none;
+  border-radius: 12px;
+  padding: 12px 22px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+/* Primary purple gradient button */
+.btn-primary {
+  background: linear-gradient(135deg, #7c6af7, #a78bfa);
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(124, 106, 247, 0.4);
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(124, 106, 247, 0.55);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+
+/* ============================================================
+   7. FILTER BAR
+   ============================================================ */
+.filter-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.filter-btn {
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--text-muted);
+  border-radius: 10px;
+  padding: 7px 16px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-btn:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+/* Active/selected filter */
+.filter-btn.active {
+  background: linear-gradient(135deg, #7c6af7, #a78bfa);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 2px 10px rgba(124, 106, 247, 0.4);
+}
+
+/* Push "Clear Done" to the right */
+.filter-right {
+  margin-left: auto;
+}
+
+/* Danger-style button for clearing completed tasks */
+.clear-btn {
+  border: 1.5px solid rgba(248, 113, 113, 0.3);
+  background: transparent;
+  color: var(--red);
+  border-radius: 10px;
+  padding: 7px 14px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.clear-btn:hover {
+  background: rgba(248, 113, 113, 0.12);
+}
+
+
+/* ============================================================
+   8. TASK LIST & TASK ITEM CARD
+   ============================================================ */
+#taskList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.task-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: all 0.25s;
+  animation: slideIn 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Colored left accent stripe based on priority */
+.task-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  border-radius: 3px 0 0 3px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+/* Show the stripe on hover and always for prioritized tasks */
+.task-item:hover {
+  border-color: var(--accent);
+  transform: translateX(3px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+
+.task-item:hover::before {
+  opacity: 1;
+  background: var(--accent);
+}
+
+/* Completed tasks appear faded */
+.task-item.completed {
+  opacity: 0.55;
+}
+
+/* Priority-based stripe colors */
+.task-item[data-priority="high"]::before   { background: var(--red);    opacity: 1; }
+.task-item[data-priority="medium"]::before { background: var(--yellow);  opacity: 1; }
+.task-item[data-priority="low"]::before    { background: var(--green);   opacity: 1; }
+.task-item.completed::before               { background: var(--accent2); opacity: 1; }
+
+
+/* ---- Checkbox Circle ---- */
+.task-checkbox {
+  width: 22px;
+  height: 22px;
+  min-width: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  background: transparent;
+}
+
+.task-checkbox:hover {
+  border-color: var(--accent);
+  background: var(--accent-glow);
+}
+
+/* Filled state when task is done */
+.task-checkbox.checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.task-checkbox.checked::after {
+  content: '✓';
+  font-size: 12px;
+  color: #fff;
+  font-weight: 700;
+}
+
+
+/* ---- Task Text & Meta ---- */
+.task-body {
+  flex: 1;
+  min-width: 0; /* prevents text overflow breaking layout */
+}
+
+.task-text {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text);
+  word-break: break-word;
+  transition: color 0.2s;
+}
+
+/* Strike-through for completed tasks */
+.task-item.completed .task-text {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.task-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 5px;
+  flex-wrap: wrap;
+}
+
+
+/* ============================================================
+   9. PRIORITY BADGES
+   ============================================================ */
+.priority-badge {
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 2px 9px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.priority-badge.high   { background: rgba(248, 113, 113, 0.18); color: var(--red); }
+.priority-badge.medium { background: rgba(250, 204, 21, 0.18);  color: var(--yellow); }
+.priority-badge.low    { background: rgba(74, 222, 128, 0.18);  color: var(--green); }
+
+
+/* ============================================================
+   10. DUE DATE LABEL
+   ============================================================ */
+.due-date {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+/* Turn red when the task is past its due date */
+.due-date.overdue {
+  color: var(--red);
+}
+
+
+/* ============================================================
+   11. ACTION BUTTONS (Edit / Delete)
+   ============================================================ */
+.task-actions {
+  display: flex;
+  gap: 6px;
+  opacity: 0;                    /* hidden by default */
+  transition: opacity 0.2s;
+}
+
+/* Reveal buttons on hover */
+.task-item:hover .task-actions {
+  opacity: 1;
+}
+
+.icon-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+}
+
+.icon-btn:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+/* Delete button turns red on hover */
+.icon-btn.del:hover {
+  border-color: var(--red);
+  color: var(--red);
+  background: rgba(248, 113, 113, 0.1);
+}
+
+
+/* ============================================================
+   12. EMPTY STATE — shown when no tasks match the filter
+   ============================================================ */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-muted);
+}
+
+.empty-state .emoji {
+  font-size: 3rem;
+  margin-bottom: 12px;
+}
+
+.empty-state p {
+  font-size: 0.92rem;
+}
+
+
+/* ============================================================
+   13. CUSTOM SCROLLBAR
+   ============================================================ */
+::-webkit-scrollbar        { width: 6px; }
+::-webkit-scrollbar-track  { background: transparent; }
+::-webkit-scrollbar-thumb  { background: var(--border); border-radius: 99px; }
+
+
+/* ============================================================
+   14. ANIMATIONS
+   ============================================================ */
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
