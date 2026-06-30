@@ -300,3 +300,174 @@ document.getElementById('taskInput').addEventListener('keydown', function(event)
 // Load saved tasks, then draw the initial list
 loadTasks();
 renderTasks();
+
+
+/* ============================================================
+   13. PRODUCTIVITY TOOLS (Stopwatch & Timer)
+   ============================================================ */
+
+// --- Stopwatch State ---
+let swInterval = null;
+let swElapsedMs = 0;
+let swIsRunning = false;
+let swLastTime = 0;
+
+// --- Timer State ---
+let tmInterval = null;
+let tmRemainingMs = 0;
+let tmIsRunning = false;
+let tmLastTime = 0;
+
+// --- Formatting Helper ---
+function formatTime(ms) {
+  const totalSeconds = Math.floor(ms / 1000);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  const h = String(hours).padStart(2, '0');
+  const m = String(minutes).padStart(2, '0');
+  const s = String(seconds).padStart(2, '0');
+
+  if (hours > 0) {
+    return `${h}:${m}:${s}`;
+  }
+  return `${m}:${s}`;
+}
+
+function formatStopwatch(ms) {
+  const totalSeconds = Math.floor(ms / 1000);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  const centiseconds = Math.floor((ms % 1000) / 10);
+
+  const h = String(hours).padStart(2, '0');
+  const m = String(minutes).padStart(2, '0');
+  const s = String(seconds).padStart(2, '0');
+  const cs = String(centiseconds).padStart(2, '0');
+
+  if (hours > 0) {
+    return `${h}:${m}:${s}`;
+  }
+  return `${m}:${s}.${cs}`;
+}
+
+// --- Stopwatch Logic ---
+function updateStopwatchDisplay() {
+  document.getElementById('stopwatchDisplay').textContent = formatStopwatch(swElapsedMs);
+}
+
+function toggleStopwatch() {
+  const btn = document.getElementById('swStartBtn');
+  if (swIsRunning) {
+    // Pause
+    clearInterval(swInterval);
+    swIsRunning = false;
+    btn.textContent = 'Start';
+    btn.classList.remove('danger');
+  } else {
+    // Start
+    swLastTime = Date.now();
+    swInterval = setInterval(() => {
+      const now = Date.now();
+      swElapsedMs += (now - swLastTime);
+      swLastTime = now;
+      updateStopwatchDisplay();
+    }, 10);
+    swIsRunning = true;
+    btn.textContent = 'Pause';
+    btn.classList.add('danger');
+  }
+}
+
+function resetStopwatch() {
+  clearInterval(swInterval);
+  swIsRunning = false;
+  swElapsedMs = 0;
+  updateStopwatchDisplay();
+  const btn = document.getElementById('swStartBtn');
+  btn.textContent = 'Start';
+  btn.classList.remove('danger');
+}
+
+// --- Timer Logic ---
+function updateTimerDisplay() {
+  document.getElementById('timerDisplay').textContent = formatTime(tmRemainingMs);
+}
+
+function toggleTimer() {
+  const btn = document.getElementById('tmStartBtn');
+  const inputWrap = document.getElementById('timerInputWrap');
+  const display = document.getElementById('timerDisplay');
+  const minInput = document.getElementById('timerMinInput');
+
+  if (tmIsRunning) {
+    // Pause
+    clearInterval(tmInterval);
+    tmIsRunning = false;
+    btn.textContent = 'Resume';
+    btn.classList.remove('danger');
+  } else {
+    // Start
+    if (tmRemainingMs === 0) {
+      // Initialize from input
+      let mins = parseInt(minInput.value, 10);
+      if (isNaN(mins) || mins <= 0) mins = 25; // Default 25 min
+      tmRemainingMs = mins * 60 * 1000;
+    }
+
+    inputWrap.style.display = 'none';
+    display.style.display = 'block';
+    updateTimerDisplay();
+
+    tmLastTime = Date.now();
+    tmInterval = setInterval(() => {
+      const now = Date.now();
+      tmRemainingMs -= (now - tmLastTime);
+      tmLastTime = now;
+
+      if (tmRemainingMs <= 0) {
+        // Timer finished
+        clearInterval(tmInterval);
+        tmRemainingMs = 0;
+        tmIsRunning = false;
+        updateTimerDisplay();
+        btn.textContent = 'Start';
+        btn.classList.remove('danger');
+        
+        // Simple visual alert or sound
+        const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+        audio.play().catch(e => console.log('Audio play failed:', e));
+        
+        // Slight delay for alert so UI updates first
+        setTimeout(() => {
+            alert('Timer finished!');
+            resetTimer();
+        }, 50);
+        return;
+      }
+      updateTimerDisplay();
+    }, 100);
+
+    tmIsRunning = true;
+    btn.textContent = 'Pause';
+    btn.classList.add('danger');
+  }
+}
+
+function resetTimer() {
+  clearInterval(tmInterval);
+  tmIsRunning = false;
+  tmRemainingMs = 0;
+  
+  document.getElementById('timerInputWrap').style.display = 'flex';
+  document.getElementById('timerDisplay').style.display = 'none';
+  
+  const btn = document.getElementById('tmStartBtn');
+  btn.textContent = 'Start';
+  btn.classList.remove('danger');
+}
+
+// Initialize displays
+updateStopwatchDisplay();

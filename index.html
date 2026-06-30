@@ -25,6 +25,33 @@
       <p>Stay focused. Get things done.</p>
     </div>
 
+    <!-- ---- Productivity Tools (Stopwatch / Timer) ---- -->
+    <div class="tools-section">
+      <!-- Stopwatch -->
+      <div class="tool-card">
+        <div class="tool-header">Stopwatch</div>
+        <div class="time-display" id="stopwatchDisplay">00:00.00</div>
+        <div class="tool-actions">
+          <button class="btn tool-btn" id="swStartBtn" onclick="toggleStopwatch()">Start</button>
+          <button class="btn tool-btn secondary" onclick="resetStopwatch()">Reset</button>
+        </div>
+      </div>
+
+      <!-- Timer -->
+      <div class="tool-card">
+        <div class="tool-header">Timer</div>
+        <div class="timer-input-wrap" id="timerInputWrap">
+          <input type="number" id="timerMinInput" placeholder="Min" min="1" max="120" value="25" />
+          <span>min</span>
+        </div>
+        <div class="time-display" id="timerDisplay" style="display: none;">25:00</div>
+        <div class="tool-actions">
+          <button class="btn tool-btn" id="tmStartBtn" onclick="toggleTimer()">Start</button>
+          <button class="btn tool-btn secondary" onclick="resetTimer()">Reset</button>
+        </div>
+      </div>
+    </div>
+
     <!-- ---- Stats Cards (Total / Active / Done) ---- -->
     <div class="stats">
       <div class="stat-card">
