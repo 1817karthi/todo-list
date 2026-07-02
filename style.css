@@ -176,16 +176,17 @@ body {
   display: flex;
   justify-content: center;
   gap: 6px;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
-.pm-mode-btn {
-  padding: 4px 10px;
-  font-size: 0.75rem;
+.pomodoro-modes .pm-mode-btn {
+  padding: 4px 12px;
+  font-size: 0.7rem;
   border-radius: 6px;
   flex: none;
+  min-width: 60px;
 }
-.pm-mode-btn.active {
+.pomodoro-modes .pm-mode-btn.active {
   background: var(--accent);
   color: #fff;
   border-color: var(--accent);
