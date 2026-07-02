@@ -469,5 +469,100 @@ function resetTimer() {
   btn.classList.remove('danger');
 }
 
+// --- Pomodoro State ---
+let pmInterval = null;
+let pmRemainingMs = 25 * 60 * 1000;
+let pmIsRunning = false;
+let pmLastTime = 0;
+let pmCurrentMode = 'work'; // 'work' or 'break'
+
+// --- Pomodoro Logic ---
+function updatePomodoroDisplay() {
+  document.getElementById('pomodoroDisplay').textContent = formatTime(pmRemainingMs);
+}
+
+function setPomodoroMode(mode) {
+  if (pmIsRunning) return; // Don't allow changing mode while running
+  pmCurrentMode = mode;
+  
+  // Update active button styling
+  const btns = document.querySelectorAll('.pm-mode-btn');
+  btns.forEach(btn => btn.classList.remove('active'));
+  event.target.classList.add('active');
+
+  // Set initial time based on mode
+  if (mode === 'work') {
+    pmRemainingMs = 25 * 60 * 1000;
+  } else if (mode === 'break') {
+    pmRemainingMs = 5 * 60 * 1000;
+  }
+  updatePomodoroDisplay();
+}
+
+function togglePomodoro() {
+  const btn = document.getElementById('pmStartBtn');
+
+  if (pmIsRunning) {
+    // Pause
+    clearInterval(pmInterval);
+    pmIsRunning = false;
+    btn.textContent = 'Resume';
+    btn.classList.remove('danger');
+  } else {
+    // Start
+    pmLastTime = Date.now();
+    pmInterval = setInterval(() => {
+      const now = Date.now();
+      pmRemainingMs -= (now - pmLastTime);
+      pmLastTime = now;
+
+      if (pmRemainingMs <= 0) {
+        // Pomodoro finished
+        clearInterval(pmInterval);
+        pmRemainingMs = 0;
+        pmIsRunning = false;
+        updatePomodoroDisplay();
+        btn.textContent = 'Start';
+        btn.classList.remove('danger');
+        
+        // Play sound
+        const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+        audio.play().catch(e => console.log('Audio play failed:', e));
+        
+        setTimeout(() => {
+            alert(pmCurrentMode === 'work' ? 'Work session complete! Take a break.' : 'Break is over! Time to focus.');
+            // Auto reset to default time for current mode
+            setPomodoroMode(pmCurrentMode);
+        }, 50);
+        return;
+      }
+      updatePomodoroDisplay();
+    }, 100);
+
+    pmIsRunning = true;
+    btn.textContent = 'Pause';
+    btn.classList.add('danger');
+  }
+}
+
+function resetPomodoro() {
+  clearInterval(pmInterval);
+  pmIsRunning = false;
+  
+  // Reset time based on current mode
+  if (pmCurrentMode === 'work') {
+    pmRemainingMs = 25 * 60 * 1000;
+  } else if (pmCurrentMode === 'break') {
+    pmRemainingMs = 5 * 60 * 1000;
+  }
+  
+  updatePomodoroDisplay();
+  
+  const btn = document.getElementById('pmStartBtn');
+  btn.textContent = 'Start';
+  btn.classList.remove('danger');
+}
+
 // Initialize displays
 updateStopwatchDisplay();
+updatePomodoroDisplay();

@@ -50,6 +50,20 @@
           <button class="btn tool-btn secondary" onclick="resetTimer()">Reset</button>
         </div>
       </div>
+
+      <!-- Pomodoro -->
+      <div class="tool-card">
+        <div class="tool-header">Pomodoro</div>
+        <div class="pomodoro-modes">
+          <button class="btn tool-btn secondary pm-mode-btn active" onclick="setPomodoroMode('work')">Work</button>
+          <button class="btn tool-btn secondary pm-mode-btn" onclick="setPomodoroMode('break')">Break</button>
+        </div>
+        <div class="time-display" id="pomodoroDisplay">25:00</div>
+        <div class="tool-actions">
+          <button class="btn tool-btn" id="pmStartBtn" onclick="togglePomodoro()">Start</button>
+          <button class="btn tool-btn secondary" onclick="resetPomodoro()">Reset</button>
+        </div>
+      </div>
     </div>
 
     <!-- ---- Stats Cards (Total / Active / Done) ---- -->

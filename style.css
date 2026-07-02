@@ -172,6 +172,25 @@ body {
   font-weight: 500;
 }
 
+.pomodoro-modes {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.pm-mode-btn {
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  border-radius: 6px;
+  flex: none;
+}
+.pm-mode-btn.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
 .tool-actions {
   display: flex;
   gap: 8px;
